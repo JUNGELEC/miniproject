@@ -71,8 +71,9 @@
             //컬러 배열
             const colors = ['#FF7F50', '#20B2AA', '#9370DB', '#32CD32', '#7FFFD4', '#4682B4', '#8A2BE2'];
             // Math.floor를 사용하여 소수점 버림 , 랜덤하게 숫자를 뽑고, colors[랜덤인덱스] 로 배경화면이 바뀐다
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            document.body.style.background = `${randomColor}`;
+            const randomColor1 = colors[Math.floor(Math.random() * colors.length)];
+            const randomColor2 = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.background = `linear-gradient(to right, ${randomColor1}, ${randomColor2})`;
         }
     </script>
 
