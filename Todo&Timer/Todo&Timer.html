@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo List 와 뽀모도르</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+</style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row">
+    <!-- 부트 스트랩 반으로 나누기 -->
+    <div class="col-md-6">
+      <h1 class="mb-4">TODO</h1>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Todo를 추가하세요" id="todoInput">
+        <button class="btn btn-primary" type="button" id="addTodoBtn">Todo추가</button>
+      </div>
+      <div id="todoList" class="list-group"></div>
+    </div>
+    <div class="col-md-6">
+      <h5 class="mb-3">뽀모도르 타이머</h5>
+      <p class="h1" id="timerDisplay">30:00</p>
+    </div>
+  </div>
+</div>
+
+<script>
+    //이벤트 리스너 
+    document.addEventListener('DOMContentLoaded', function () {
+        //getElementById 조작준비
+        const addTodoBtn = document.getElementById('addTodoBtn');
+        const todoInput = document.getElementById('todoInput');
+        const todoList = document.getElementById('todoList');
+        const timerDisplay = document.getElementById('timerDisplay');
+        
+        //타이머 와 남은 시간 ,그리고 현재 todo 위치
+        let timer;
+        let secondsLeft = 30 * 60; // 30분
+        let currentTodo = null;
+        
+        //버튼을 누르면 creatTodo함수 사용
+        addTodoBtn.addEventListener('click', createTodo);
+        
+        function createTodo() {
+            //공백 제거 텍스트
+            const todoText = todoInput.value.trim();
+            
+            if (todoText !== '') {
+                //현재 todoItem 생성 & 저장
+                const todoItem = document.createElement('div');
+                //부트스트랩 속성 추가 : list-group-item(리스트로 만들어줌), list-group-item-action(리스트 누르기 가능)
+                todoItem.classList.add('list-group-item', 'list-group-item-action');
+                //내용물 = todoText(입력한것)
+                todoItem.textContent = todoText;
+                
+                //스타트 버튼 누르면
+                const startBtn = document.createElement('button');
+                startBtn.classList.add('btn', 'btn-success', 'btn-sm', 'ms-1','float-end');
+                startBtn.textContent = 'Start';
+                //스타트 버튼 클릭하면
+                startBtn.addEventListener('click', function () {
+                    //타이머를 다시 리셋
+                    clearInterval(timer);
+                    secondsLeft = 30 * 60; //30분으로 다시 원복
+                    startTimer(todoItem); //현재 todoItem을 스타트타이머 함수에 넘김
+                });
+                
+                //삭제 버튼
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'ms-1','float-end');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.addEventListener('click', function () {
+                    todoItem.remove();
+                });
+    
+                //todo아이템에 버튼 추가 , 아이템 -> 리스트에 추가
+                todoItem.appendChild(deleteBtn);
+                todoItem.appendChild(startBtn);
+                todoList.appendChild(todoItem);
+                //인풋 초기화
+                todoInput.value = '';
+            }
+        }
+
+        //스타트 버튼 누르면
+        function startTimer(todoItem) {
+            //1초마다 반복 함수
+            timer = setInterval(function () {
+                //남은 시간이 0초일때
+                if (secondsLeft === 0) {
+                    clearInterval(timer);
+                    timerDisplay.textContent = '00:00';
+                    // 현재 todo에 취소선을 그어줌
+                    todoItem.classList.add('completed');
+                } else {
+                    //0초가 아니면 남은 시간을 빼면서 계속해서 업데이트 
+                    const minutes = Math.floor(secondsLeft / 60);
+                    const seconds = secondsLeft % 60;
+                    //디지털 시계처럼 00:00으로 만들기
+                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    secondsLeft--;
+                }
+            }, 1000);
+        }
+  });
+</script>
+</body>
+</html>
